@@ -1,0 +1,56 @@
+#
+# (c) Copyright 2015-2016 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# common install tasks associated with the install of magnum services
+---
+
+- name: magnum-common | install | debug message for magnum component
+  debug:
+    msg: "Running magnum-common install for {{ magnum_component }}"
+    when: magnum_component is defined
+    run_once: true
+
+# accounts & group
+- name: magnum-common | install | Add group '{{ magnum_system_group }}'
+  become: yes
+  group:
+    name: "{{ magnum_system_group }}"
+
+- name: magnum-common | install |
+    Add magnum system user account '{{ magnum_system_user }}'
+  become: yes
+  user:
+    name: "{{ magnum_system_user }}"
+    group: "{{ magnum_system_group }}"
+    createhome: "{{ magnum_system_createhome }}"
+    home: "{{ magnum_system_home_folder }}"
+    shell: "{{ magnum_system_shell }}"
+    system: True
+
+- name: magnum-common | install | Create magnum directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    owner: "{{ magnum_system_user }}"
+    group: "{{ magnum_system_group }}"
+    mode: 0755
+    state: directory
+  with_items:
+    - "{{ magnum_lock_file_location }}"
+    - "{{ magnum_keys_file_location }}"
+    - "{{ magnum_cert_file_location }}"
+    - "{{ magnum_log_dir }}"
+    - "{{ magnum_service_conf_dir }}"

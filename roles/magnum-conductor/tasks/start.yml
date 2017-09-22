@@ -1,0 +1,54 @@
+#
+# (c) Copyright 2015-2016 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# Start the magnum-conductor service
+---
+- name: magnum-conductor | start | Activate the latest installed version
+  become: yes
+  install_package:
+    name: magnum
+    service: magnum-conductor
+    activate: act_on
+    version: "{{ ardana_notify_magnum_conductor_install_result.version }}"
+  when: not (ardana_notify_magnum_conductor_install_result is not defined)
+
+- name: magnum-conductor | start | register persistent fact of activate
+  command: /bin/true
+  register: ardana_notify_magnum_conductor_restart_required
+  when: ardana_notify_magnum_conductor_install_result is defined and
+        ardana_notify_magnum_conductor_install_result.changed
+
+- name: magnum-conductor | start | Restart magnum-conductor service
+  become: yes
+  service:
+    name: magnum-conductor
+    state: restarted
+  # This checks if either a 'conductor' restart or complete magnum
+  # restart is required. If the complete restart is required the check
+  # is negated therefore value does not get marked for deletion, as it
+  # may be still be required.
+  when: (((not (ardana_notify_magnum_restart_required is not defined)) and
+        ardana_notify_magnum_restart_required.changed) or
+        (ardana_notify_magnum_conductor_restart_required is defined and
+        ardana_notify_magnum_conductor_restart_required.changed)) and
+        magnum_conductor_restarted_result is not defined
+  register: magnum_conductor_restarted_result
+
+- name: magnum-conductor | start | Start magnum-conductor service
+  become: yes
+  service:
+    name: magnum-conductor
+    state: started

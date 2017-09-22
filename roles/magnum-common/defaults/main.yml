@@ -1,0 +1,91 @@
+#
+# (c) Copyright 2015-2017 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+---
+
+# Layout of this file:
+# At the top of this file (following on from this text) are the root level
+# variables. Variables defined here have global scope.
+#
+# Files are defined by identifiers followed by a colon(:), with sections in
+# a file indented to the next level.
+
+# system level vars
+# -----------------
+# Values in this section relate to the build/install of magnum
+# at a system level
+magnum_system_group: magnum
+magnum_system_user: magnum
+magnum_log_group: adm
+magnum_system_createhome: false
+magnum_system_shell: /bin/false
+
+magnum_state_root_dir: /
+magnum_system_home_folder: "{{ magnum_state_root_dir }}/var/lib/magnum"
+magnum_lock_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum"
+magnum_log_dir: "{{ magnum_state_root_dir }}/var/log/magnum"
+magnum_keys_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/keys"
+magnum_cert_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/certificates"
+magnum_log_location: "/var/log/magnum"
+
+# [DEFAULT]
+magnum_debug_mode: "True"
+magnum_verbose_mode: "True"
+magnum_state_path: "{{ magnum_state_root_dir }}/var/lib/magnum"
+magnum_rootwrap_config: "{{ magnum_service_conf_dir }}/rootwrap.conf"
+magnum_api_paste_config: "{{ magnum_service_conf_dir }}/api-paste.ini"
+
+magnum_rabbit_password: "{{ MAG_CND.consumes_FND_RMQ.vars.accounts.magnum.password }}"
+magnum_rabbit_userid: "{{ MAG_CND.consumes_FND_RMQ.vars.accounts.magnum.username }}"
+
+# TODO Check this
+magnum_rpc_backend: "rabbit"
+magnum_rabbit_hosts: "{% for x in MAG_API.consumes_FND_RMQ.members.private %}{{ x.host }}:{{ x.port }}{%if not loop.last %},{% endif %}{% endfor %}"
+magnum_rabbit_ha_queues: true
+magnum_rabbit_use_ssl: "{{ MAG_CND.consumes_FND_RMQ.members.private[0].use_tls }}"
+
+magnum_lock_path: "{{ magnum_state_root_dir }}/var/lib/magnum"
+
+magnum_port: >
+  {{ host | item('bind.MAG_API.internal.port',
+                 default=9511) }}
+magnum_host: >
+  {{ host | item('bind.MAG_API.internal.ip_address',
+                 default=host.vars.my_hostname_address) }}
+
+# [database ssl]
+ca_file: "/etc/ssl/certs/ca-certificates.crt"
+magnum_db_ssl: "{% if MAG_API.consumes_FND_MDB.vips.private[0].use_tls %}?ssl_ca={{ ca_file }}{% endif %}"
+
+# Database
+magnum_db_connection: "mysql://{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.username }}:{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.password | urlencode }}@{{ MAG_API.consumes_FND_MDB.vips.private[0].host }}/magnum{{ magnum_db_ssl }}"
+
+magnum_admin_password: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_password }}"
+magnum_admin_user: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_user }}"
+magnum_admin_tenant_name: "{{ KEY_API.vars.keystone_service_tenant }}"
+magnum_ca_file: "/etc/ssl/certs/ca-certificates.crt"
+magnum_auth_identity_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}"
+magnum_auth_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}/v3"
+magnum_signing_dir: "/tmp/keystone-signing-magnum"
+
+barbican_region_name: "{{ MAG_CND.consumes_KEYMGR_API.regions|first }}"
+glance_region_name : "{{ MAG_CND.consumes_GLA_API.regions|first }}"
+neutron_region_name : "{{ MAG_CND.consumes_NEU_SVR.regions|first }}"
+heat_region_name : "{{ MAG_CND.consumes_HEA_API.regions|first }}"
+keystone_region_name : "{{ MAG_CND.consumes_KEY_API.regions|first }}"
+magnum_region_name : "{{ MAG_CND.consumes_MAG_API.regions|first }}"
+nova_region_name : "{{ MAG_CND.consumes_NOV_API.regions|first }}"
+cinder_region_name : "{{ MAG_CND.consumes_CND_API.regions|first }}"

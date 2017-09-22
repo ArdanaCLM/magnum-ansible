@@ -1,0 +1,56 @@
+#
+# (c) Copyright 2015-2017 Hewlett Packard Enterprise Development LP
+# (c) Copyright 2017 SUSE LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# Configure the magnum-api service
+---
+
+- include: ../../magnum-common/tasks/_set_directories.yml
+  vars:
+    install_package_result: "{{ ardana_notify_magnum_api_install_result }}"
+
+- include: ../../magnum-common/tasks/configure.yml
+
+- name: magnum-api | configure | Write Magnum api conf
+  include: ../../magnum-common/tasks/_write_conf.yml
+  src: "../../magnum-api/templates/magnum-api.conf.j2"
+  dest: "magnum-api.conf"
+  config: "{{ magnum_service_conf }}"
+  register: ardana_notify_magnum_api_restart_required
+
+- name: magnum-api | configure | Apply template
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ magnum_service_conf_dir }}/{{ item }}"
+    owner: "{{ magnum_system_user }}"
+    group: "{{ magnum_system_group }}"
+    mode: 0640
+  with_items:
+    - "api-logging.conf"
+    - "api-paste.ini"
+  register: ardana_notify_magnum_api_restart_required
+
+- name: magnum-api | configure | Touch api and json log files
+  become: yes
+  file:
+    path: "{{ item }}"
+    owner: "{{ magnum_system_user }}"
+    group: "{{ magnum_log_group }}"
+    mode: 0640
+    state: touch
+  with_items:
+    - "{{ magnum_log_location }}/magnum-api-json.log"
+    - "{{ magnum_log_location }}/magnum-api.log"
