@@ -71,7 +71,7 @@ ca_file: "/etc/ssl/certs/ca-certificates.crt"
 magnum_db_ssl: "{% if MAG_API.consumes_FND_MDB.vips.private[0].use_tls %}?ssl_ca={{ ca_file }}{% endif %}"
 
 # Database
-magnum_db_connection: "mysql://{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.username }}:{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.password | urlencode }}@{{ MAG_API.consumes_FND_MDB.vips.private[0].host }}/magnum{{ magnum_db_ssl }}"
+magnum_db_connection: "mysql+pymysql://{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.username }}:{{ MAG_API.consumes_FND_MDB.vars.accounts.magnum.password | urlencode }}@{{ MAG_API.consumes_FND_MDB.vips.private[0].host }}/magnum{{ magnum_db_ssl }}"
 
 magnum_admin_password: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_password }}"
 magnum_admin_user: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_user }}"
