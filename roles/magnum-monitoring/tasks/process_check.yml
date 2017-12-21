@@ -16,16 +16,6 @@
 #
 ---
 
-- name: magnum-monitoring | process_check |
-    Copy magnum Custom plugin for Ardana only
-  become: yes
-  copy:
-    src: magnum.py
-    dest: "{{ monasca_agent_detection_plugin_dir }}/magnum.py"
-    owner: root
-    group: root
-    mode: 0440
-
 - name: magnum-monitoring | process_check | Run monasca agent detection plugin
   become: yes
   monasca_agent_plugin:
