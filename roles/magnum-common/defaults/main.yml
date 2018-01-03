@@ -81,6 +81,11 @@ magnum_auth_identity_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}"
 magnum_auth_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}/v3"
 magnum_signing_dir: "/tmp/keystone-signing-magnum"
 
+magnum_keystone_default_domain: "{{ KEY_API.vars.keystone_default_domain }}"
+magnum_project_domain_name: "{{ KEY_API.vars.keystone_default_domain }}"
+magnum_user_domain_name: "{{ KEY_API.vars.keystone_default_domain }}"
+magnum_project_name: "magnum"
+
 barbican_region_name: "{{ MAG_CND.consumes_KEYMGR_API.regions|first }}"
 glance_region_name : "{{ MAG_CND.consumes_GLA_API.regions|first }}"
 neutron_region_name : "{{ MAG_CND.consumes_NEU_SVR.regions|first }}"
