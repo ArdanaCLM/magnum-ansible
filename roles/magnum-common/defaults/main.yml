@@ -35,6 +35,7 @@ magnum_system_shell: /bin/false
 
 magnum_state_root_dir: /
 magnum_system_home_folder: "{{ magnum_state_root_dir }}/var/lib/magnum"
+magnum_lock_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum"
 magnum_log_dir: "{{ magnum_state_root_dir }}/var/log/magnum"
 magnum_keys_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/keys"
 magnum_cert_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/certificates"
@@ -52,7 +53,11 @@ magnum_rabbit_userid: "{{ MAG_CND.consumes_FND_RMQ.vars.accounts.magnum.username
 
 # TODO Check this
 magnum_rpc_backend: "rabbit"
-magnum_rabbit_hosts: "{% for x in MAG_API.consumes_FND_RMQ.members.private %}{{ x.host }}:{{ x.port }}{%if not loop.last %},{% endif %}{% endfor %}"
+magnum_rabbit_hosts: >
+  {%- for x in MAG_API.consumes_FND_RMQ.members.private -%}
+    {{ magnum_rabbit_userid }}:{{ magnum_rabbit_password }}@{{ x.host }}:{{ x.port }}{%- if not loop.last -%},{%- endif -%}
+  {%- endfor -%}
+magnum_rabbit_hosts_transport_url: "rabbit://{{ magnum_rabbit_hosts }}"
 magnum_rabbit_ha_queues: true
 magnum_rabbit_use_ssl: "{{ MAG_CND.consumes_FND_RMQ.members.private[0].use_tls }}"
 
@@ -83,7 +88,7 @@ magnum_signing_dir: "/tmp/keystone-signing-magnum"
 magnum_keystone_default_domain: "{{ KEY_API.vars.keystone_default_domain }}"
 magnum_project_domain_name: "{{ KEY_API.vars.keystone_default_domain }}"
 magnum_user_domain_name: "{{ KEY_API.vars.keystone_default_domain }}"
-magnum_project_name: "magnum"
+magnum_project_name: "{{ KEY_API.vars.keystone_service_tenant }}"
 
 barbican_region_name: "{{ MAG_CND.consumes_KEYMGR_API.regions|first }}"
 glance_region_name : "{{ MAG_CND.consumes_GLA_API.regions|first }}"
