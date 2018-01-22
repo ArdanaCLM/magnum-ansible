@@ -35,7 +35,6 @@ magnum_system_shell: /bin/false
 
 magnum_state_root_dir: /
 magnum_system_home_folder: "{{ magnum_state_root_dir }}/var/lib/magnum"
-magnum_lock_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum"
 magnum_log_dir: "{{ magnum_state_root_dir }}/var/log/magnum"
 magnum_keys_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/keys"
 magnum_cert_file_location: "{{ magnum_state_root_dir }}/var/lib/magnum/certificates"
@@ -57,7 +56,7 @@ magnum_rabbit_hosts: "{% for x in MAG_API.consumes_FND_RMQ.members.private %}{{ 
 magnum_rabbit_ha_queues: true
 magnum_rabbit_use_ssl: "{{ MAG_CND.consumes_FND_RMQ.members.private[0].use_tls }}"
 
-magnum_lock_path: "{{ magnum_state_root_dir }}/var/lib/magnum"
+magnum_lock_path: "{{ magnum_state_root_dir }}/var/lib/magnum/lock"
 
 magnum_port: >
   {{ host | item('bind.MAG_API.internal.port',
