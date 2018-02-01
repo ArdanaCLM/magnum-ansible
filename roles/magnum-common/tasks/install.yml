@@ -49,7 +49,7 @@
     mode: 0755
     state: directory
   with_items:
-    - "{{ magnum_lock_file_location }}"
+    - "{{ magnum_lock_path }}"
     - "{{ magnum_keys_file_location }}"
     - "{{ magnum_cert_file_location }}"
     - "{{ magnum_log_dir }}"
