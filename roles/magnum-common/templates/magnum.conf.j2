@@ -24,6 +24,7 @@ state_path = {{ magnum_state_path }}
 rootwrap_config = {{ magnum_rootwrap_config }}
 host = {{ magnum_host }}
 rpc_backend = {{ magnum_rpc_backend }}
+transport_url = {{ magnum_rabbit_hosts_transport_url }}
 
 [api]
 host = {{ magnum_host }}
@@ -55,6 +56,41 @@ endpoint_type = internalURL
 [heat_client]
 region_name = {{ heat_region_name }}
 endpoint_type = internalURL
+
+# NOTE(gyee): This is @#$@!$% ugly! So Magnum is using the [keystone_auth]
+# section in order to support Keystone V3. See
+#
+# https://review.openstack.org/#/c/274227/
+#
+# Unfortunately, keystone middleware is looking for the [keystone_authtoken]
+# section for the Keystone authentication options. So we have two choices.
+#
+# 1. have a single [keystone_authtoken] section and put the legacy options
+#    there (i.e. admin_user, admin_tenant_name, etc). The problem with this
+#    approach is that the Magnum project must live in the Default domain as
+#    it was meant for Keystone v2 backward compatibility.
+# 2. create a new [keystone_auth] section which duplicate most of the stuff
+#    in the [keystone_authtoken] section.
+#
+# I opted for 2 because we really need the flexibility to support Keystone
+# v3 without any restricitons.
+#
+# TODO(gyee): we really need to convince upstream Magnum to use keystoneauth
+# instead of inventing their own.
+#
+[keystone_auth]
+auth_uri = {{ magnum_auth_uri }}
+auth_url = {{ magnum_auth_uri }}
+auth_type = password
+identity_uri = {{ magnum_auth_identity_uri }}
+
+region_name = {{ keystone_region_name }}
+user_domain_name = {{ magnum_keystone_default_domain }}
+project_domain_name = {{ magnum_project_domain_name }}
+project_name = {{ magnum_project_name }}
+username = {{ magnum_admin_user }}
+password = {{ magnum_admin_password }}
+service_token_roles_required = True
 
 [keystone_authtoken]
 auth_uri = {{ magnum_auth_uri }}
