@@ -45,6 +45,8 @@
   become: yes
   file:
     path: "{{ magnum_system_home_folder }}"
+    owner: "{{ magnum_system_user }}"
+    group: "{{ magnum_system_group }}"
     state: directory
     mode: 0750
 
