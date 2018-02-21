@@ -46,6 +46,11 @@ region_name = {{ cinder_region_name }}
 [cluster]
 add_ca_cert_file = {{ magnum_add_ca_cert_file }}
 
+[drivers]
+## Path to the OpenStack CA-bundle file to pass and install in all cluster
+## nodes. (string value)
+openstack_ca_file = {{ magnum_add_ca_cert_file }}
+
 [database]
 connection = {{ magnum_db_connection }}
 
