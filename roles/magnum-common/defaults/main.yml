@@ -71,7 +71,7 @@ magnum_host: >
                  default=host.vars.my_hostname_address) }}
 
 # [database ssl]
-ca_file: "/etc/ssl/certs/ca-certificates.crt"
+ca_file: "{{ trusted_ca_bundle }}"
 magnum_db_ssl: "{% if MAG_API.consumes_FND_MDB.vips.private[0].use_tls %}?ssl_ca={{ ca_file }}{% endif %}"
 
 # Database
@@ -80,7 +80,7 @@ magnum_db_connection: "mysql+pymysql://{{ MAG_API.consumes_FND_MDB.vars.accounts
 magnum_admin_password: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_password }}"
 magnum_admin_user: "{{ MAG_API.consumes_KEY_API.vars.keystone_magnum_user }}"
 magnum_admin_tenant_name: "{{ KEY_API.vars.keystone_service_tenant }}"
-magnum_ca_file: "/etc/ssl/certs/ca-certificates.crt"
+magnum_ca_file: "{{ trusted_ca_bundle }}"
 magnum_auth_identity_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}"
 magnum_auth_uri: "{{ MAG_API.consumes_KEY_API.vips.private[0].url }}/v3"
 magnum_signing_dir: "/tmp/keystone-signing-magnum"
