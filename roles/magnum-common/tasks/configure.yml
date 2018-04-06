@@ -25,14 +25,12 @@
 
 - name: magnum-common | configure | Set fact for additional CA cert file
   set_fact:
-    magnum_add_ca_abs_cert_file: >
-      "{{ local_cert_directory }}/{{ hostvars[groups['TLS-CA--first-member'][0]]
-      ['magnum_add_ca_cert_file'] }}"
+    magnum_add_ca_cert_file: >
+      "{{ local_cert_directory }}/{{ ansible_local.ardana_int_ca_first_crt }}"
 
 - include: _write_conf.yml
   src: "magnum.conf.j2"
   dest: "magnum.conf"
-  config: "{{ magnum_conf }}"
 
 - name: magnum-common | configure | notify on magnum.conf change
   shell: echo "notify change"
@@ -42,7 +40,6 @@
 - include: _write_conf.yml
   src: "policy.json.j2"
   dest: "policy.json"
-  config: "{{ magnum_conf }}"
 
 - name: magnum-common | configure | notify on policy.json change
   shell: echo "notify change"
