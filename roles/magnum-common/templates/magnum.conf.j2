@@ -23,7 +23,6 @@
 state_path = {{ magnum_state_path }}
 rootwrap_config = {{ magnum_rootwrap_config }}
 host = {{ magnum_host }}
-rpc_backend = {{ magnum_rpc_backend }}
 transport_url = {{ magnum_rabbit_hosts_transport_url }}
 
 [api]
@@ -81,7 +80,7 @@ endpoint_type = internalURL
 # instead of inventing their own.
 #
 [keystone_auth]
-auth_uri = {{ magnum_auth_uri }}
+www_authenticate_uri = {{ magnum_auth_uri }}
 auth_url = {{ magnum_auth_uri }}
 auth_type = password
 identity_uri = {{ magnum_auth_identity_uri }}
@@ -95,7 +94,7 @@ password = {{ magnum_admin_password }}
 service_token_roles_required = True
 
 [keystone_authtoken]
-auth_uri = {{ magnum_auth_uri }}
+www_authenticate_uri = {{ magnum_auth_uri }}
 auth_url = {{ magnum_auth_uri }}
 auth_type = password
 identity_uri = {{ magnum_auth_identity_uri }}
