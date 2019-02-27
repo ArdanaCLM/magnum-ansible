@@ -37,12 +37,14 @@ level: NOTSET
 class: handlers.WatchedFileHandler
 args: ('{{ magnum_log_dir }}/magnum-conductor.log',)
 formatter: context
+level: INFO
 
 # Writes JSON to disk, beaver will ship to logstash
 [handler_logstash]
 class: handlers.WatchedFileHandler
 args: ('{{ magnum_log_dir }}/magnum-conductor-json.log',)
 formatter: logstash
+level: INFO
 
 
 # datefmt must be set otherwise you end up with too many (msecs) fields
