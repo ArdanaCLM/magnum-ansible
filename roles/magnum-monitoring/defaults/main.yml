@@ -16,5 +16,5 @@
 #
 ---
 
-magnum_api_local_url: 'http://{{ host.bind.MAG_API.internal.ip_address }}:{{ host.bind.MAG_API.internal.port }}'
+magnum_api_local_url: 'http://{{ host.bind.MAG_API.internal.ip_address | ipwrap }}:{{ host.bind.MAG_API.internal.port }}'
 magnum_api_internal_url: "{{ MAG_API.advertises.vips.private[0].url }}"
